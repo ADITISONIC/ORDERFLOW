@@ -1,14 +1,29 @@
 package handlers
 
 import (
+	"encoding/json"
 	"net/http"
+	"time"
 
+	"orderflow/cache"
 	"orderflow/dto"
 	"orderflow/services"
 
 	"github.com/gin-gonic/gin"
 )
-
+// CreateOrder godoc
+//
+// @Summary Create Order
+// @Description Creates a new order
+// @Tags Orders
+// @Accept json
+// @Produce json
+// @Security BearerAuth
+// @Param request body dto.CreateOrderRequest true "Order Details"
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Router /orders [post]
 func CreateOrder(c *gin.Context) {
 
 	var req dto.CreateOrderRequest
@@ -32,7 +47,7 @@ func CreateOrder(c *gin.Context) {
 		return
 	}
 
-	err := services.CreateOrder(
+	order,err := services.CreateOrder(
 		req.ProductName,
 		req.Quantity,
 		req.Price,
@@ -47,12 +62,37 @@ func CreateOrder(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
+	response := gin.H{
 		"success": true,
 		"message": "Order created successfully",
-	})
+		"orderId": order.ID,
+		"status":  order.Status,
+	}
+	key, exists := c.Get("idempotencyKey")
+
+	if exists {
+
+		responseJSON, _ := json.Marshal(response)
+
+		cache.SetCache(
+			key.(string),
+			string(responseJSON),
+			24*time.Hour,
+		)
+	}
+	c.JSON(http.StatusCreated, response)
 }
 
+// GetOrders godoc
+//
+// @Summary Get Orders
+// @Description Returns all orders for the logged-in user
+// @Tags Orders
+// @Produce json
+// @Security BearerAuth
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Router /orders [get]
 func GetOrders(c *gin.Context) {
 
 	userID, _ := c.Get("userID")
@@ -70,6 +110,6 @@ func GetOrders(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{
 		"success": true,
-		"data": orders,
+		"data":    orders,
 	})
 }

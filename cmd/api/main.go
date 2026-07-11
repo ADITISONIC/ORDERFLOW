@@ -1,3 +1,11 @@
+// @title OrderFlow API
+// @version 1.0
+// @description Event-driven Order Processing System using Go, Kafka, Redis & MySQL.
+// @host localhost:8080
+// @BasePath /
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 package main
 
 import (
@@ -6,6 +14,7 @@ import (
 	"orderflow/consumer"
 	"orderflow/database"
 	"orderflow/routes"
+	_ "orderflow/docs"
 )
 
 func main() {

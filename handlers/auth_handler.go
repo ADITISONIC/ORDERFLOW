@@ -7,7 +7,17 @@ import (
 
 	"github.com/gin-gonic/gin"
 )
-
+// Register godoc
+//
+// @Summary Register a new user
+// @Description Creates a new user account
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param request body dto.RegisterRequest true "User Details"
+// @Success 201 {object} map[string]interface{}
+// @Failure 400 {object} map[string]interface{}
+// @Router /register [post]
 func Register(c *gin.Context) {
 
 	var req dto.RegisterRequest
@@ -43,7 +53,17 @@ func Register(c *gin.Context) {
 		"message": "User registered successfully",
 	})
 }
-
+// Login godoc
+//
+// @Summary Login user
+// @Description Authenticate user and return JWT
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param request body dto.LoginRequest true "Login Credentials"
+// @Success 200 {object} map[string]interface{}
+// @Failure 401 {object} map[string]interface{}
+// @Router /login [post]
 func Login(c *gin.Context) {
 
 	var req dto.LoginRequest

@@ -27,14 +27,25 @@ func ConnectRedis() {
 	fmt.Println("✅ Redis Connected")
 }
 
-func SetCache(key string, value string) error {
+func SetCache(key string, value string, ttl time.Duration) error {
 
 	return RedisClient.Set(
 		ctx,
 		key,
 		value,
-		10*time.Minute,
+		ttl,
 	).Err()
+}
+
+func Exists(key string) (bool, error) {
+
+	count, err := RedisClient.Exists(ctx, key).Result()
+
+	if err != nil {
+		return false, err
+	}
+
+	return count > 0, nil
 }
 
 func GetCache(key string) (string, error) {
