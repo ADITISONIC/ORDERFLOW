@@ -19,3 +19,12 @@ func GetOrdersByUser(userID uint) ([]models.Order, error) {
 
 	return orders, err
 }
+
+func UpdateOrderStatus(orderID uint, status string) error {
+
+	return config.DB.
+		Model(&models.Order{}).
+		Where("id = ?", orderID).
+		Update("status", status).
+		Error
+}
