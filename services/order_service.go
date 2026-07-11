@@ -22,3 +22,7 @@ func CreateOrder(
 
 	return repositories.CreateOrder(&order)
 }
+
+func GetOrders(userID uint) ([]models.Order, error) {
+	return repositories.GetOrdersByUser(userID)
+}

@@ -52,3 +52,24 @@ func CreateOrder(c *gin.Context) {
 		"message": "Order created successfully",
 	})
 }
+
+func GetOrders(c *gin.Context) {
+
+	userID, _ := c.Get("userID")
+
+	orders, err := services.GetOrders(userID.(uint))
+
+	if err != nil {
+
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"success": false,
+			"message": err.Error(),
+		})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"data": orders,
+	})
+}

@@ -17,6 +17,8 @@ func SetupRouter() *gin.Engine {
     authorized.Use(middleware.AuthMiddleware())
 
     authorized.GET("/profile", handlers.Profile)
+	authorized.POST("/orders", handlers.CreateOrder)
+	authorized.GET("/orders", handlers.GetOrders)
 
 	return router
 }
