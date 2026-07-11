@@ -1,0 +1,7 @@
+.git
+.gitignore
+README.md
+tmp
+vendor
+node_modules
+*.log

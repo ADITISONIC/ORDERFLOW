@@ -24,7 +24,7 @@ func ConnectRedis() {
 		panic(err)
 	}
 
-	fmt.Println("✅ Redis Connected")
+	fmt.Println("Redis Connected")
 }
 
 func SetCache(key string, value string, ttl time.Duration) error {

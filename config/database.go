@@ -41,5 +41,5 @@ func ConnectDB() {
 		log.Fatal(err)
 	}
 
-	fmt.Println("✅ MySQL Connected Successfully")
+	fmt.Println("MySQL Connected Successfully")
 }
