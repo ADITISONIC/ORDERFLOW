@@ -1,11 +1,11 @@
 package consumer
 
-
 import (
 	"context"
 	"encoding/json"
 	"fmt"
 	"orderflow/events"
+	"orderflow/kafka"
 	"orderflow/repositories"
 	"time"
 
@@ -20,7 +20,7 @@ var Reader = kafkago.NewReader(kafkago.ReaderConfig{
 
 func StartConsumer() {
 
-	fmt.Println("🚀 Kafka Consumer Started")
+	fmt.Println(" Kafka Consumer Started")
 
 	for {
 
@@ -29,7 +29,11 @@ func StartConsumer() {
 		err = json.Unmarshal(message.Value, &event)
 
 		if err != nil {
-			fmt.Println("Error reading message:", err)
+			fmt.Println("Invalid message. Sending to DLQ...")
+
+			if err := kafka.PublishToDLQ(message.Value); err != nil {
+				fmt.Println("DLQ Publish Failed:", err)
+			}
 			continue
 		}
 
@@ -38,6 +42,16 @@ func StartConsumer() {
 		time.Sleep(5 * time.Second)
 
 		repositories.UpdateOrderStatus(event.OrderID, "COMPLETED")
+		if err != nil {
+
+			fmt.Println("Processing failed. Sending to DLQ...")
+			data, _ := json.Marshal(event)
+			if err := kafka.PublishToDLQ(data); err != nil {
+				fmt.Println("DLQ Publish Failed:", err)
+			}
+			continue
+
+		}
 
 		fmt.Printf("Order %d Completed\n", event.OrderID)
 	}

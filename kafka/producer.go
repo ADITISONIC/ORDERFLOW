@@ -2,6 +2,7 @@ package kafka
 
 import (
 	"context"
+	"fmt"
 
 	kafkago "github.com/segmentio/kafka-go"
 )
@@ -13,10 +14,23 @@ var Writer = &kafkago.Writer{
 }
 
 func Publish(message []byte) error {
-	return Writer.WriteMessages(
+
+	fmt.Println("Kafka Broker: localhost:9092")
+	fmt.Println("Publishing:", string(message))
+
+	err := Writer.WriteMessages(
 		context.Background(),
 		kafkago.Message{
 			Value: message,
 		},
 	)
+
+	if err != nil {
+		fmt.Println("Kafka Error:", err)
+		return err
+	}
+
+	fmt.Println("Message Published Successfully")
+
+	return nil
 }
